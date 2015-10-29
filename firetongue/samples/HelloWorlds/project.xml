@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project>
-	
-	<meta title="Hello Worlds" package="firetongue.samples" version="1.0.0" company="Level Up Labs" />
+
+	<meta title="Hello Worlds" package="tonguetwist.samples" version="1.0.0" company="Level Up Labs" />
 	<app main="Main" path="Export" file="HelloWorlds" />
-	
+
 	<source path="Source" />
-	
+
 	<haxelib name="openfl" />
-	<haxelib name="firetongue"/>
-	
+	<haxelib name="akifox-tonguetwist"/>
+
 	<assets path="Assets" rename="assets" exclude="*.svg" />
 	<icon path="Assets/openfl.svg" />
-	
+
 </project>

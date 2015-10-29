@@ -16,7 +16,7 @@
   <!-- Other classes to be compiled into your SWF -->
   <classpaths>
     <class path="T:\Development\Git\lime" />
-    <class path="T:\Development\Git\firetongue" />
+    <class path="T:\Development\Git\tonguetwist" />
     <class path="C:\HaxeToolkit\haxe\lib\task\1,0,6" />
     <class path="T:\Development\Git\openfl" />
     <class path="Source" />
@@ -24,7 +24,7 @@
   </classpaths>
   <!-- Build options -->
   <build>
-    <option directives="lime=2.0.4&#xA;firetongue=0.0.1&#xA;task=1.0.6&#xA;openfl=2.1.6&#xA;tools=2.0.4&#xA;no-compilation&#xA;openfl-flash&#xA;web" />
+    <option directives="lime=2.0.4&#xA;akifox-tonguetwist=1.0.0&#xA;task=1.0.6&#xA;openfl=2.1.6&#xA;tools=2.0.4&#xA;no-compilation&#xA;openfl-flash&#xA;web" />
     <option flashStrict="False" />
     <option noInlineOnDebug="False" />
     <option mainClass="ApplicationMain" />

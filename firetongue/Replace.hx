@@ -21,7 +21,7 @@
  * 
  */
 
-package firetongue;
+package com.akifox.tonguetwist;
 
 import flash.display.Sprite;
 

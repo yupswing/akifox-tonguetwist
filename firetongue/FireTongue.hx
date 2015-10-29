@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2013 Level Up Labs, LLC
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
@@ -10,7 +10,7 @@
  *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -18,12 +18,12 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- * 
+ *
  */
 
-package firetongue;
+package com.akifox.tonguetwist;
 
-import firetongue.FireTongue.LoadTask;
+import com.akifox.tonguetwist.TongueTwist.LoadTask;
 import flash.display.Bitmap;
 import flash.display.BitmapData;
 import flash.display.Loader;
@@ -42,15 +42,15 @@ import openfl.Assets;
 #end
 
 /**
- * FireTongue is a Haxe port of the localization framework used in Defender's Quest. 
+ * TongueTwist is a Haxe port of the localization framework used in Defender's Quest.
  *
  * Provide all your data in a localization folder in the correct format, and then
- * FireTongue will parse it and make it available to you at runtime.
+ * TongueTwist will parse it and make it available to you at runtime.
  *
  * Usage:
  *
- * //somewhere in your code: 
- * tongue = new FireTongue();
+ * //somewhere in your code:
+ * tongue = new TongueTwist();
  * tongue.init("en-US",onFinish);
  *
  * function onFinish():Void
@@ -67,10 +67,10 @@ import openfl.Assets;
  * If files are missing, optionally load them from the default locale
  * Provide a list of missing files and flags when compared to the default locale
  * Handle loading an active mod's localization data separately from the core game
- * (perhaps the user should just make two FireTongue instances for this)
+ * (perhaps the user should just make two TongueTwist instances for this)
  */
 
-class FireTongue
+class TongueTwist
 {
 	public static var default_locale:String = "en-US";					//locale to fall back on if needed
 	public var isLoaded(default, null):Bool;							//has this been loaded yet
@@ -78,22 +78,22 @@ class FireTongue
 	public var locales(get, null):Array<String>;						//list of all the locales available
 	public var missing_files(default, null):Array<String>;				//filled during initialization if files are missing
 	public var missing_flags(default, null):Map<String,Array<String>>;	//filled during initialization if flags are missing
-	
-	public function new() 
+
+	public function new()
 	{
 		//does nothing
 	}
-	
+
 	/**
-	 * Clear all the current localization data. 
+	 * Clear all the current localization data.
 	 * @param	hard Also clear all the index-related data, restoring it to a pre-initialized state.
 	 */
-	
+
 	public function clear(hard:Bool):Void
 	{
 		clearData(hard);
 	}
-	
+
 	/**
 	 * Initialize the localization structure
 	 * @param	locale_ desired locale string, ie, "en-US"
@@ -103,41 +103,41 @@ class FireTongue
 	 * @param	asynchLoadMethod_ a method for loading the files asynchronously (optional)
 	 * @param	directory_ alternate directory to look for locale (optional). Otherwise, is "assets/"
 	 */
-	
+
 	public function init(locale_:String, finished_:Dynamic = null, check_missing_:Bool = false, replace_missing_:Bool = false, ?asynchLoadMethod_:Array<LoadTask>->Void, ?directory_:String = ""):Void
 	{
 		#if debug
 			trace("LocaleData.init(" + locale_ + "," + finished_ + "," + check_missing_ + "," + replace_missing_ +"," +directory_+")");
 		#end
-		
+
 		locale = localeFormat(locale_);
 		_directory = directory_;
-		
+
 		if (isLoaded)
 		{
 			clearData();	//if we have an existing locale already loaded, clear it out first
 		}
-		
+
 		_callback_finished = finished_;
-		
+
 		_check_missing = false;
 		_replace_missing = false;
-		
+
 		if (locale != default_locale)
 		{
 			_check_missing = check_missing_;
 			_replace_missing = replace_missing_;
 		}
-		
+
 		if (_check_missing)
 		{
 			missing_files = new Array<String>();
 			missing_flags = new Map<String,Array<String>>();
 		}
-		
+
 		startLoad();
 	}
-	
+
 	/**
 	 * Provide a localization flag to get the proper text in the current locale.
 	 * @param	flag a flag string, like "$HELLO"
@@ -145,17 +145,17 @@ class FireTongue
 	 * @param	safe if true, suppresses errors and returns the untranslated flag if not found
 	 * @return  the translated string
 	 */
-	
+
 	public function get(flag:String, context:String = "data", safe:Bool = true):String
 	{
 		var orig_flag:String = flag;
 		flag = flag.toUpperCase();
-		
+
 		if (context == "index")
 		{
 			return getIndexString(flag);
 		}
-		
+
 		var index:Map<String,String>;
 		index = _index_data.get(context);
 		if (index == null)
@@ -169,16 +169,16 @@ class FireTongue
 				return flag;
 			}
 		}
-		
+
 		var str:String = "";
 		try
 		{
 			str = index.get(flag);
-			
+
 			if (str != null && str != "")
 			{
 				//Replace standard stuff:
-				
+
 				if (str.indexOf("<RE>") == 0)					//it's a redirect
 				{
 					var done:Bool = false;
@@ -213,7 +213,7 @@ class FireTongue
 						}
 					}
 				}
-				
+
 				if (str.indexOf("<RE>[") != -1)			//it's a redirect in the middle of the flag with bracket notation
 				{
 					var done:Bool = false;
@@ -243,10 +243,10 @@ class FireTongue
 						}
 					}
 				}
-				
+
 				var fix_a:Array<String> = ["<N>","<T>","<LQ>","<RQ>","<C>","<Q>"];
 				var fix_b:Array<String> = ["\n","\t","“","”",",",'"'];
-				
+
 				if (str != null && str != "") {
 					for (i in 0...fix_a.length) {
 						while (str.indexOf(fix_a[i]) != -1) {
@@ -262,14 +262,14 @@ class FireTongue
 			{
 				return orig_flag;
 			}
-			else 
+			else
 			{
 				throw new Error("LocaleData.getText(" + flag + "," + context + ")");
 			}
 		}
-		
+
 		index = null;
-		
+
 		if (str == null)
 		{
 			if (safe)
@@ -277,7 +277,7 @@ class FireTongue
 				return orig_flag;
 			}
 		}
-		
+
 		return str;
 	}
 	/**
@@ -285,7 +285,7 @@ class FireTongue
 	 * @param	str
 	 * @return
 	 */
-	
+
 	public function getFont(str:String):String
 	{
 		var replace:String = "";
@@ -307,7 +307,7 @@ class FireTongue
 		}
 		return replace;
 	}
-	
+
 	public function getFontSize(str:String, size:Int):Int
 	{
 		var replace:Int = size;
@@ -330,7 +330,7 @@ class FireTongue
 								replace = size;
 							}
 						}
-						
+
 					}
 				}
 			}
@@ -341,35 +341,35 @@ class FireTongue
 		}
 		return replace;
 	}
-	
+
 	/**
 	 * Get a locale (flag) icon
 	 * @param	locale_id
 	 * @return
 	 */
-	
+
 	public function getIcon(locale_id:String):BitmapData
 	{
 		return _index_icons.get(locale_id);
 	}
-	
+
 	public function getIndexString(flag:String):String
 	{
 		var str:String = "";
-		
+
 		var arr:Array<String> = null;
 		if (flag.indexOf(":") != 0) {
 			arr = flag.split(":");
 			if (arr != null && arr.length == 2) {
 				var target_locale:String = localeFormat(arr[1]);
 				var index_flag:String = arr[0];
-				
+
 				//get the locale entry for the target locale from the index
 				var lindex:Fast = _index_locales.get(target_locale);
-				
+
 				var currLangNode:Fast = null;
 				var nativeNode:Fast = null;
-				
+
 				if (lindex.hasNode.label) {
 					for (lNode in lindex.nodes.label) {			//look through each label
 						if (lNode.has.id) {
@@ -381,12 +381,12 @@ class FireTongue
 								nativeNode = lNode;						//labels in NATIVE language
 							}
 							if (currLangNode != null && nativeNode != null) {
-								break;	
+								break;
 							}
 						}
 					}
-				}	
-				
+				}
+
 				switch(index_flag) {
 				case "$UI_LANGUAGE":	//return the localized word "LANGUAGE"
 					if (nativeNode.hasNode.ui && nativeNode.node.ui.has.language) {
@@ -417,7 +417,7 @@ class FireTongue
 					var langnative:String = "";
 					if (nativeNode != null && nativeNode.has.language) {
 						langnative = nativeNode.att.language;
-					}							
+					}
 					if (currLangNode != null && currLangNode.has.language) {
 						lang = currLangNode.att.language;
 					}
@@ -437,17 +437,17 @@ class FireTongue
 				}
 			}
 		}
-		
+
 		return flag;
 	}
-	
+
 	/**
 	 * Get the body of a localization note (locale menu purposes)
 	 * @param	locale
 	 * @param	id
 	 * @return
 	 */
-	
+
 	public function getNoteBody(locale:String, id:String):String
 	{
 		try
@@ -461,14 +461,14 @@ class FireTongue
 		}
 		return "";
 	}
-	
+
 	/**
 	 * Get the title of a localization note (locale menu purposes)
 	 * @param	locale
 	 * @param	id
 	 * @return
 	 */
-	
+
 	public function getNoteTitle(locale:String, id:String):String
 	{
 		try
@@ -482,39 +482,39 @@ class FireTongue
 		}
 		return "";
 	}
-	
+
 	/******PRIVATE******/
-	
+
 	//All of the game's localization data
 	private var _index_data:Map < String, Map < String, String >> ;
-	
+
 	//All of the locale entries
 	private var _index_locales:Map<String,Fast>;
-	
+
 	//All of the text notations
 	private var _index_notes:Map<String,String>;
-	
+
 	//All of the icons from various languages
 	private var _index_icons:Map<String,BitmapData>;
-	
+
 	//Any custom images loaded
 	private var _index_images:Map<String,BitmapData>;
-	
+
 	//Font replacement rules
 	private var _index_font:Map<String,Fast>;
-	
+
 	private var _callback_finished:Dynamic;
-	
+
 	private var _list_files:Array<Fast>;
 	private var _files_loaded:Int = 0;
-	
+
 	private var _safety_bit:Int = 0;
-	
+
 	private var _check_missing:Bool = false;
 	private var _replace_missing:Bool = false;
-	
+
 	private var _directory:String = "";
-	
+
 	private function clearBitmapDataMap(map:Map<String, BitmapData>):Void
 	{
 		clearMap(map, function (bitmapData:BitmapData)
@@ -522,16 +522,16 @@ class FireTongue
 			if (bitmapData != null) bitmapData.dispose();
 		});
 	}
-	
+
 	/**
-	 * Clear all the current localization data. 
+	 * Clear all the current localization data.
 	 * @param	hard Also clear all the index-related data, restoring it to a pre-initialized state.
 	 */
-	
+
 	private function clearData(hard:Bool = false):Void
 	{
 		_callback_finished = null;
-		
+
 		if (_list_files != null)
 		{
 			while (_list_files.length > 0)
@@ -540,24 +540,24 @@ class FireTongue
 			}
 			_list_files = null;
 		}
-		
+
 		isLoaded = false;
 		_files_loaded = 0;
-		
-		for (sub_key in _index_data.keys()) 
+
+		for (sub_key in _index_data.keys())
 		{
 			var sub_index:Map<String,Dynamic> = _index_data.get(sub_key);
 			_index_data.remove(sub_key);
 			clearMap(sub_index);
 			sub_index = null;
 		}
-		
+
 		clearBitmapDataMap(_index_images);
 		clearMap(_index_font);
-		
+
 		_index_images = null;
 		_index_font = null;
-		
+
 		if (hard)
 		{
 			clearMap(_index_locales);
@@ -567,7 +567,7 @@ class FireTongue
 			_index_icons = null;
 			_index_notes = null;
 		}
-		
+
 		clearMap(missing_flags);
 		if (missing_files != null)
 		{
@@ -576,15 +576,15 @@ class FireTongue
 				missing_files.pop();
 			}
 		}
-		
+
 		missing_files = null;
 		missing_flags = null;
 	}
-	
+
 	private function clearMap<T1, T2>(map:Map<T1, T2>, ?onRemove:T2->Void):Void
 	{
 		if (map == null) return;
-		
+
 		for (key in map.keys())
 		{
 			var element = map.get(key);
@@ -595,17 +595,17 @@ class FireTongue
 			map.remove(key);
 		}
 	}
-	
+
 	/**
 	 * Just a quick way to deep-copy a Fast object
 	 * @param	fast
 	 * @return
 	 */
-	
+
 	private inline function copyFast(fast:Fast):Fast {
 		return new Fast(Xml.parse(fast.x.toString()));
 	}
-	
+
 	private function doTasks(tasks:Array<LoadTask>):Void
 	{
 		for (i in 0...tasks.length)
@@ -615,7 +615,7 @@ class FireTongue
 			onLoadFile();
 		}
 	}
-	
+
 	private function findClosestExistingLocale(localeStr:String,testFile:String):String
 	{
 		var paths:Array<String> = null;
@@ -627,15 +627,15 @@ class FireTongue
 		#elseif flash
 		dirpath = "assets/locales/";
 		#end
-		
+
 		#if debug
 		trace("--> looking in: " + dirpath);
 		#end
-		
+
 		paths = getDirectoryContents(dirpath);
-		
+
 		var localeCandidates:Array<String> = [];
-		
+
 		for (str in paths) {
 			str = StringTools.replace(str, dirpath, "");
 			var newLocale:String = "";
@@ -653,14 +653,14 @@ class FireTongue
 				}
 			}
 		}
-		
+
 		#if debug
 		trace("--> candidates: " + localeCandidates);
 		#end
-		
+
 		bestLocale = localeStr;
 		bestDiff = Math.POSITIVE_INFINITY;
-		
+
 		for (loc in localeCandidates) {
 			var diff:Int = stringDiff(localeStr, loc, false);
 			if (diff < bestDiff) {
@@ -668,10 +668,10 @@ class FireTongue
 				bestLocale = loc;
 			}
 		}
-		
+
 		return bestLocale;
 	}
-	
+
 	private function get_locales():Array<String>
 	{
 		var arr:Array<String> = [];
@@ -681,7 +681,7 @@ class FireTongue
 		}
 		return arr;
 	}
-	
+
 	private function getDirectoryContents(str):Array<String>
 	{
 		#if (cpp || neko)
@@ -689,7 +689,7 @@ class FireTongue
 		#else
 			var arr:Array<String> = [];
 			var libraryArr:Array<String> = null;
-			#if (openfl >= "2.0.0") 
+			#if (openfl >= "2.0.0")
 				libraryArr = Assets.list(TEXT);
 			#else
 				var defaultLibrary:AssetLibrary = Assets.libraries.get("default");
@@ -707,28 +707,28 @@ class FireTongue
 			return arr;
 		#end
 	}
-	
+
 	/**
 	 * Loads a file and processes its contents in the data structure
 	 * @param	fileData <file> node entry from index.xml
 	 * @param	check_vs_default if true, will use to do safety check rather than immediately store the data
 	 * @return
 	 */
-	
+
 	private function loadFile(fileData:Fast, check_vs_default:Bool = false):String
 	{
 		var fileName:String = fileData.node.file.att.value;
 		var fileType:String = fileName.substr(fileName.length - 3, 3);
 		var fileID:String = fileData.node.file.att.id;
-		
+
 		var raw_data:String = "";
-		
+
 		var loc:String = locale;
 		if (check_vs_default)
 		{
 			loc = default_locale;
 		}
-		
+
 		switch(fileType)
 		{
 		case "txt","tsv":
@@ -784,9 +784,9 @@ class FireTongue
 		}
 		return fileName;
 	}
-	
+
 	private function loadImage(fname:String):BitmapData{
-		var img:BitmapData = null; 
+		var img:BitmapData = null;
 		try
 		{
 			if (_directory == "")
@@ -803,7 +803,7 @@ class FireTongue
 					#end
 				}
 				#end
-			}	
+			}
 		}
 		catch (e:Error)
 		{
@@ -817,23 +817,23 @@ class FireTongue
 		}
 		return img;
 	}
-	
+
 	/**
 	 * Loads and processes the index file
 	 */
-	
+
 	private function loadIndex():Void
 	{
 		var index:String = loadText("index.xml");
 		var xml:Fast = null;
-		
+
 		_list_files = new Array<Fast>();
-		
+
 		if (index == "" || index == null) {
 			throw new Error("Couldn't load index.xml!");
 		}else {
 			xml = new Fast(Xml.parse(index));
-			
+
 			//Create a list of file metadata from the list in the index
 			if(xml.hasNode.data && xml.node.data.hasNode.file){
 				for (fileNode in xml.node.data.nodes.file) {
@@ -841,47 +841,47 @@ class FireTongue
 				}
 			}
 		}
-		
+
 		if (_index_locales == null) {
 			_index_locales = new Map<String,Fast>();
 		}
 		if (_index_notes == null) {
 			_index_notes = new Map<String,String>();
-		}			
+		}
 		if (_index_icons == null) {
 			_index_icons = new Map<String,BitmapData>();
 		}
 		if (_index_images == null) {
 			_index_images = new Map<String,BitmapData>();
 		}
-		
+
 		var id:String = "";
-		
+
 		for (localeNode in xml.node.data.nodes.locale) {
 			id = localeNode.att.id;
 			_index_locales.set(id, localeNode);
-			
+
 			//load & store the flag image
 			var flag:BitmapData = loadImage("_flags/" + id + ".png");
-			_index_icons.set(id, flag); 
-			
-			
+			_index_icons.set(id, flag);
+
+
 			var isDefault:Bool = localeNode.has.is_default && localeNode.att.is_default == "true";
 			if (isDefault) {
 				default_locale = id;
 			}
 		}
-		
+
 		//If default locale is not defined yet, make it American English
 		if (default_locale == "") {
 			default_locale = "en-US";
 		}
-		
+
 		//If the current locale is not defined yet, make it the default
 		if (locale == "") {
 			locale = default_locale;
 		}
-		
+
 		//Load and store all the translation notes
 		for (noteNode in xml.node.data.nodes.note) {
 			id = noteNode.att.id;
@@ -902,7 +902,7 @@ class FireTongue
 			}
 		}
 	}
-	
+
 	private function loadRootDirectory():Void
 	{
 		var firstFile = _list_files[0];
@@ -930,7 +930,7 @@ class FireTongue
 			}
 		}
 	}
-	
+
 	private function loadText(fname:String):String
 	{
 		var text:String = "";
@@ -957,7 +957,7 @@ class FireTongue
 		}
 		return text;
 	}
-	
+
 	private function localeFormat(str:String):String
 	{
 		var arr:Array<String> = str.split("-");
@@ -967,7 +967,7 @@ class FireTongue
 		}
 		return str;
 	}
-	
+
 	private function logMissingFile(fname:String):Void
 	{
 		if (missing_files == null)
@@ -976,14 +976,14 @@ class FireTongue
 		}
 		missing_files.push(fname);
 	}
-	
+
 	private function logMissingFlag(id:String, flag:String):Void
 	{
 		if (missing_flags == null)
 		{
 			missing_flags = new Map<String,Array<String>>();
 		}
-		
+
 		if(missing_flags.exists(id) == false)
 		{
 			missing_flags.set(id, new Array<String>());
@@ -991,15 +991,15 @@ class FireTongue
 		var list:Array<String> = missing_flags.get(id);
 		list.push(flag);
 	}
-	
+
 	private function onLoadFile():Void
 	{
 		_files_loaded++;
-		
+
 		if (_files_loaded == _list_files.length)
 		{
 			isLoaded = true;
-			
+
 			if (_check_missing)
 			{
 				if (missing_files.length == 0)
@@ -1016,7 +1016,7 @@ class FireTongue
 					missing_flags = null;
 				}
 			}
-			
+
 			if (_callback_finished != null)
 			{
 				try
@@ -1030,39 +1030,39 @@ class FireTongue
 			}
 		}
 	}
-	
+
 	private function printIndex(id:String, index:Map < String, Dynamic > ):Void
 	{
 		#if debug
 		trace("printIndex(" + id + ")");
-		
+
 		for (key in index.keys()) {
 			trace("..." + key + "," + index.get(key));
 		}
 		#end
 	}
-	
+
 	/**
 	 * Process this data file and populate localization fields
 	 * @param	csv
 	 * @param	id
 	 * @param	check_vs_default
 	 */
-	
+
 	private function processCSV(csv:CSV, id:String, check_vs_default:Bool = false):Void
 	{
 		var flag:String = "";
 		var field_num:Int = csv.fields.length;
-		
+
 		if (_index_data.exists(id) == false)
 		{
 			_index_data.set(id, new Map<String,String>());	//create the index for this id
 		}
-		
+
 		var _index:Map<String,String> = _index_data.get(id);
 		var _real_fields:Int = 1;
-		
-		//count the number of non-comment fields 
+
+		//count the number of non-comment fields
 		//(ignore 1st field, which is flag root field)
 		for (fieldi in 1...csv.fields.length)
 		{
@@ -1072,15 +1072,15 @@ class FireTongue
 				_real_fields++;
 			}
 		}
-		
+
 		//Go through each row
 		for (rowi in 0...csv.grid.length)
 		{
 			var row:Array<String> = csv.grid[rowi];
-			
+
 			//Get the flag root
 			flag = row[0];
-			
+
 			if (_real_fields > 2)
 			{
 				//Count all non-comment fields as suffix fields to the flag root
@@ -1097,17 +1097,17 @@ class FireTongue
 			}
 			else if (_real_fields == 2)
 			{
-				//If only two non-comment fields, 
+				//If only two non-comment fields,
 				//Assume it's the standard ("flag","value") pattern
 				//Just write the first cell
 				writeIndex(_index, flag, row[1], id, check_vs_default);
 			}
 		}
-		
+
 		csv.destroy();
 		csv = null;
 	}
-	
+
 	private function processFonts(xml:Fast):Void
 	{
 		if (xml != null && xml.hasNode.data && xml.node.data.hasNode.font)
@@ -1119,7 +1119,7 @@ class FireTongue
 			}
 		}
 	}
-	
+
 	private function processPNG(img:BitmapData, id:String, check_vs_default:Bool = false):Void
 	{
 		if (check_vs_default && _check_missing)
@@ -1142,7 +1142,7 @@ class FireTongue
 			_index_images.set(id, img);
 		}
 	}
-	
+
 	private function processXML(xml:Fast, id:String):Void
 	{
 		//what this does depends on the id
@@ -1153,7 +1153,7 @@ class FireTongue
 			//donothing
 		}
 	}
-	
+
 	private function startLoad(?asynchMethod:Array<LoadTask>->Void):Void
 	{
 		//if we don't have a list of files, we need to process the index first
@@ -1161,16 +1161,16 @@ class FireTongue
 		{
 			loadIndex();
 		}
-		
+
 		//we need new ones of these no matter what:
 		_index_data = new Map<String,Map<String,String>>();
 		_index_font = new Map<String,Fast>();
-		
+
 		loadRootDirectory();		//make sure we can find our root directory
-		
+
 		//Load all the files in our list of files
 		var tasks:Array<LoadTask> = [];
-		
+
 		for (fileNode in _list_files)
 		{
 			var value:String = "";
@@ -1182,7 +1182,7 @@ class FireTongue
 			{
 				var task = {fileNode:fileNode, check:false};
 				tasks.push(task);
-				
+
 				if (_check_missing)
 				{
 					task = {fileNode:fileNode, check:true};
@@ -1196,7 +1196,7 @@ class FireTongue
 				#end
 			}
 		}
-		
+
 		if (asynchMethod != null)
 		{
 			asynchMethod(tasks);
@@ -1206,7 +1206,7 @@ class FireTongue
 			doTasks(tasks);
 		}
 	}
-	
+
 	private function stringDiff(a:String, b:String, caseSensitive:Bool = true):Int
 	{
 		var totalDiff:Int = 0;
@@ -1215,14 +1215,14 @@ class FireTongue
 			a = a.toLowerCase();
 			b = b.toLowerCase();
 		}
-		
+
 		var weight:Int = 1;
 		var max:Int = Std.int(Math.max(a.length, b.length));
 		for (j in 0...max)
 		{
 			weight *= 10;
 		}
-		
+
 		for (i in 0...a.length)
 		{
 			var char_a:String = a.charAt(i);
@@ -1240,14 +1240,14 @@ class FireTongue
 		}
 		return totalDiff;
 	}
-	
+
 	private function writeIndex(_index:Map<String,String>, flag:String, value:String, id:String, check_vs_default:Bool = false):Void
 	{
 		if (flag == null)
 		{
 			return;
 		}
-		
+
 		if (check_vs_default && _check_missing)
 		{
 			//flag exists in default locale but not current locale

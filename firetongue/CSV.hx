@@ -21,7 +21,7 @@
  * 
  */
 
-package firetongue;
+package com.akifox.tonguetwist;
 
 /**
  * A simple CSV (comma separated values) structure

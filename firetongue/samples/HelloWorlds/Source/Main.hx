@@ -34,13 +34,13 @@ import flash.geom.Matrix;
 import flash.text.TextField;
 import flash.text.TextFormat;
 import flash.text.TextFormatAlign;
-import firetongue.FireTongue;
-import firetongue.Replace;
+import com.akifox.tonguetwist.TongueTwist;
+import com.akifox.tonguetwist.Replace;
 import openfl.display.Shape;
 
 class Main extends Sprite {
 
-	private var tongue:FireTongue;
+	private var tongue:TongueTwist;
 	private var locales:Array<String>;
 	private var text:TextField;
 	
@@ -60,7 +60,7 @@ class Main extends Sprite {
 		text.y = (600 - text.height) / 2;
 		addChild(text);
 		
-		tongue = new FireTongue();
+		tongue = new TongueTwist();
 		tongue.init("en-US", onFinish, true);
 		
 		locales = tongue.locales;

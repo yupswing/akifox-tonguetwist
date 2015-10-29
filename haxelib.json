@@ -1,14 +1,14 @@
 {
- "name": "firetongue",
- "url" : "https://github.com/larsiusprime/firetongue",
+ "name": "akifox-tonguetwist",
+ "url" : "https://github.com/yupswing/akifox-tonguetwist",
  "license": "MIT",
  "tags": ["translation","localization","language","game","text","openfl"],
- "description": "A localization/translation library for OpenFL",
- "user":"larsiusprime",
+ "description": "A localization/translation library",
+ "user": "yupswing",
  "version": "1.0.0",
  "releasenote": "First haxelib release",
- "contributors": ["larsiusprime"],
- "dependencies": { 
+ "contributors": ["larsiusprime","yupswing"],
+ "dependencies": {
   "openfl": ""
  }
 }

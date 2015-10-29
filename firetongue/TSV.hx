@@ -21,9 +21,9 @@
  * 
  */
 
-package firetongue;
+package com.akifox.tonguetwist;
 
-import firetongue.CSV;
+import com.akifox.tonguetwist.CSV;
 
 /**
  * A simple TSV (tab separated values) structure
